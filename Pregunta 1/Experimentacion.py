@@ -16,6 +16,8 @@ import sys
 import numpy as np
 import matplotlib.pyplot as plt
 from pathlib import Path
+
+from pyparsing import alphas
 from Implementacion import cargar_luminancia, compresion_global, piramide_laplaciana, reconstruir_piramide, starlet, reconstruir_starlet, rmse
 
 raiz = Path(__file__).resolve().parent.parent
@@ -89,7 +91,32 @@ def umbral_duro(capas, alpha):
 
 
 def experimento_2():
-    return
+
+    alphas=(0.05, 0.20) # Aca podemos ir cambiando los alphas
+
+    fig, axes = plt.subplots(len(alphas), 2, figsize=(15, 7.5), constrained_layout=True)
+    for f, alpha in enumerate(alphas):
+        d_t, pct_l = umbral_duro(d_lap, alpha)
+        w_t, pct_s = umbral_duro(w_star, alpha)
+
+        rec_l = np.clip(reconstruir_piramide(d_t, c_lap), 0, 1)
+        rec_s = np.clip(reconstruir_starlet(w_t, c_star), 0, 1)
+
+        rmse_l = rmse(I, rec_l)
+        rmse_s = rmse(I, rec_s)
+
+        print(f"\nalpha = {alpha:.2f}:")
+        print(f"  LP       % conservado : {[round(p, 2) for p in pct_l]},  RMSE = {rmse_l:.4f}")
+        print(f"  Starlet  % conservado : {[round(p, 2) for p in pct_s]},   RMSE = {rmse_s:.4f}")
+
+        H, W = I.shape
+        recorte = [int(0.4 * H), int(0.6 * H), int(0.4 * W), int(0.4 * W)]
+
+    #fig.suptitle(" Umbral duro y artefactos ", fontsize=12)
+    #plt.savefig(carpeta/"p1_exp2_umbral.png", dpi=200, bbox_inches="tight")
+    #plt.show()
+
+
 if __name__ == "__main__":
     #experimento_1()
     experimento_2()
