@@ -19,7 +19,7 @@ import numpy as np
 import tifffile
 from scipy.fft import fft2, ifft2, fftshift, ifftshift
 import cv2
-
+from skimage.color import rgb2hsv, hsv2rgb
 
 # Funciones varias:
 
@@ -88,4 +88,23 @@ def durand(Y, sigma_s=None, sigma_r=0.4, contraste=30): #los valores son por la 
     Y_out = 10 ** (k * (base - base.max()) + detalle)
 
     return Y_out
+
+
+
+#Punto 2   C' = Y' · ( C / (Y + ε) )ᵝ 
+def recolorear(E, Y, Y_out, beta=1, recortar=True):
+
+    rgb = Y_out[..., None] * ((E / (Y[..., None] + EPS))**beta)
+    return np.clip(rgb, 0, 1) if recortar else rgb
+
+
+def recolorear_hsv(E, Y, Y_out, k_s=1):
+
+    # Reconstruccion con b = 1
+    rgb = recolorear(E, Y, Y_out, beta=1)
+
+    # Modificamos saturacion
+    hsv = rgb2hsv(rgb)
+    hsv[..., 1] = np.clip(k_s * hsv[..., 1], 0, 1)
+    return np.clip(hsv2rgb(hsv), 0, 1)
 
