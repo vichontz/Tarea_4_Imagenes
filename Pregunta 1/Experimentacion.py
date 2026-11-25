@@ -38,4 +38,21 @@ w_star, c_star = starlet(I, NIVELES)
 #comparación, utilice escalas de visualización coherentes e indique las dimensiones de cada capa. 
 
 def experimento_1():
-    return
+
+
+    fig, axes = plt.subplots(2, NIVELES + 1, figsize=(18, 6.5), constrained_layout=True)
+    vmax_l = np.percentile(np.abs(np.concatenate([d.ravel() for d in d_lap])), 99.5)
+    vmax_s = np.percentile(np.abs(np.concatenate([w.ravel() for w in w_star])), 99.5)
+
+    for j in range(NIVELES):
+        # Piramide Laplaciana
+        ax_l = axes[0, j]
+        ax_l.imshow(d_lap[j], cmap="seismic", vmin=-vmax_l, vmax=vmax_l)
+        ax_l.set_title(f"LP d_{j+1}\n{d_lap[j].shape}", fontsize=9)
+        ax_l.axis("off")
+
+        # Starlet
+        ax_s = axes[1, j]
+        ax_s.imshow(w_star[j], cmap="seismic", vmin=-vmax_s, vmax=vmax_s)
+        ax_s.set_title(f"Starlet w_{j+1}\n{w_star[j].shape}", fontsize=9)
+        ax_s.axis("off")
