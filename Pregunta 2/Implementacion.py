@@ -52,7 +52,17 @@ def compresion_log(Y):
 
 
 # filtro homomórfico:
+def H_homomorfico(forma, gamma_H, gamma_L, D0, c=1):
+    P, Q = forma
 
+    v, u = np.mgrid[0:P, 0:Q]
+    D2 = (u - Q / 2)**2 + (v - P / 2)**2
+
+    return gamma_L + (gamma_H - gamma_L) * (1 - np.exp(-c * D2 / D0**2))
+
+
+def filtro_homomorfico(Y, gamma_H, gamma_L, D0, c=1):
+    return
 
 
 # metodo de durand:
