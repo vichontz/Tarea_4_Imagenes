@@ -92,9 +92,12 @@ def umbral_duro(capas, alpha):
 
 def experimento_2():
 
-    alphas=(0.05, 0.20) # Aca podemos ir cambiando los alphas
+    alphas = (0.05, 0.20)  # Aca podemos ir cambiando los alphas
+    recorte = (slice(430, 560), slice(295, 405))
 
-    fig, axes = plt.subplots(len(alphas), 4, figsize=(15, 7.5), constrained_layout=True)
+    fig_g, axes_g = plt.subplots(len(alphas), 2, figsize=(10, 7.5), constrained_layout=True)
+    fig_r, axes_r = plt.subplots(len(alphas), 2, figsize=(10, 7.5), constrained_layout=True)
+
     for f, alpha in enumerate(alphas):
         d_t, pct_l = umbral_duro(d_lap, alpha)
         w_t, pct_s = umbral_duro(w_star, alpha)
@@ -109,30 +112,31 @@ def experimento_2():
         print(f"  LP       % conservado : {[round(p, 2) for p in pct_l]},  RMSE = {rmse_l:.4f}")
         print(f"  Starlet  % conservado : {[round(p, 2) for p in pct_s]},   RMSE = {rmse_s:.4f}")
 
-        
-        recorte = (slice(430, 560), slice(295, 405))
-        # Imagenes
-        axes[f, 0].imshow(rec_l, cmap="gray", vmin=0, vmax=1)
-        axes[f, 0].set_title(f"LP (alpha={alpha})\nRMSE={rmse_l:.4f}", fontsize=9)
-        axes[f, 0].axis("off")
+        axes_g[f, 0].imshow(rec_l, cmap="gray", vmin=0, vmax=1)
+        axes_g[f, 0].set_title(f"LP (alpha={alpha})\nRMSE={rmse_l:.4f}", fontsize=9)
+        axes_g[f, 0].axis("off")
 
-        axes[f, 1].imshow(rec_l[recorte], cmap="gray", vmin=0, vmax=1)
-        axes[f, 1].set_title(f"Recorte LP (alpha={alpha})", fontsize=9)
-        axes[f, 1].axis("off")
+        axes_g[f, 1].imshow(rec_s, cmap="gray", vmin=0, vmax=1)
+        axes_g[f, 1].set_title(f"Starlet (alpha={alpha})\nRMSE={rmse_s:.4f}", fontsize=9)
+        axes_g[f, 1].axis("off")
 
-        axes[f, 2].imshow(rec_s, cmap="gray", vmin=0, vmax=1)
-        axes[f, 2].set_title(f"Starlet (alpha={alpha})\nRMSE={rmse_s:.4f}", fontsize=9)
-        axes[f, 2].axis("off")
+        axes_r[f, 0].imshow(rec_l[recorte], cmap="gray", vmin=0, vmax=1)
+        axes_r[f, 0].set_title(f"Recorte LP (alpha={alpha})", fontsize=9)
+        axes_r[f, 0].axis("off")
 
-        axes[f, 3].imshow(rec_s[recorte], cmap="gray", vmin=0, vmax=1)
-        axes[f, 3].set_title(f"Recorte Starlet (alpha={alpha})", fontsize=9)
-        axes[f, 3].axis("off")
+        axes_r[f, 1].imshow(rec_s[recorte], cmap="gray", vmin=0, vmax=1)
+        axes_r[f, 1].set_title(f"Recorte Starlet (alpha={alpha})", fontsize=9)
+        axes_r[f, 1].axis("off")
 
-    fig.suptitle(" Umbral duro y artefactos ", fontsize=12)
-    plt.savefig(carpeta/"p1_exp2_umbral.png", dpi=200, bbox_inches="tight")
+    fig_g.suptitle("Umbral duro y artefactos - imágenes globales", fontsize=12)
+    fig_r.suptitle("Umbral duro y artefactos - recortes", fontsize=12)
+    fig_g.savefig(carpeta / "p1_exp2_umbral_globales.png", dpi=200, bbox_inches="tight")
+    fig_r.savefig(carpeta / "p1_exp2_umbral_recortes.png", dpi=200, bbox_inches="tight")
     plt.show()
 
 
 if __name__ == "__main__":
+# Comentar y descomentar segun lo que se quiera ejecutar
     #experimento_1()
-    experimento_2()
+    #experimento_2()
+    experimento_3()
