@@ -147,7 +147,8 @@ def experimento_3():
     ]
 
     fig_g, axes_g = plt.subplots(2, 2, figsize=(10, 7.5), constrained_layout=True)
-    
+    fig_r1, axes_r1 = plt.subplots(2, 2, figsize=(10, 7.5), constrained_layout=True)
+    fig_r2, axes_r2 = plt.subplots(2, 2, figsize=(10, 7.5), constrained_layout=True)
 
     for row, (nombre, gains) in enumerate(configs):
         d_mod = [g * d for g, d in zip(gains, d_lap)]
@@ -164,10 +165,28 @@ def experimento_3():
         axes_g[row, 1].set_title(f"Starlet - {nombre}", fontsize=8.5)
         axes_g[row, 1].axis("off")
 
-        
+        axes_r1[row, 0].imshow(rec_lap[recorte1], cmap="gray", vmin=0, vmax=1)
+        axes_r1[row, 0].set_title(f"Recorte 1 LP - {nombre}", fontsize=8.5)
+        axes_r1[row, 0].axis("off")
+
+        axes_r1[row, 1].imshow(rec_star[recorte1], cmap="gray", vmin=0, vmax=1)
+        axes_r1[row, 1].set_title(f"Recorte 1 Starlet - {nombre}", fontsize=8.5)
+        axes_r1[row, 1].axis("off")
+
+        axes_r2[row, 0].imshow(rec_lap[recorte2], cmap="gray", vmin=0, vmax=1)
+        axes_r2[row, 0].set_title(f"Recorte 2 LP - {nombre}", fontsize=8.5)
+        axes_r2[row, 0].axis("off")
+
+        axes_r2[row, 1].imshow(rec_star[recorte2], cmap="gray", vmin=0, vmax=1)
+        axes_r2[row, 1].set_title(f"Recorte 2 Starlet - {nombre}", fontsize=8.5)
+        axes_r2[row, 1].axis("off")
 
     fig_g.suptitle("Ganancia por escala - imágenes globales", fontsize=12)
+    fig_r1.suptitle("Ganancia por escala - recorte 1", fontsize=12)
+    fig_r2.suptitle("Ganancia por escala - recorte 2", fontsize=12)
     fig_g.savefig(carpeta / "p1_exp3_ganancias_globales.png", dpi=200, bbox_inches="tight")
+    fig_r1.savefig(carpeta / "p1_exp3_ganancias_recorte1.png", dpi=200, bbox_inches="tight")
+    fig_r2.savefig(carpeta / "p1_exp3_ganancias_recorte2.png", dpi=200, bbox_inches="tight")
     plt.show()
 
 if __name__ == "__main__":
