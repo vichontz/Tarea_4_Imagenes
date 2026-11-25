@@ -192,5 +192,5 @@ def experimento_3():
 if __name__ == "__main__":
 # Comentar y descomentar segun lo que se quiera ejecutar
     #experimento_1()
-    #experimento_2()
-    experimento_3()
+    experimento_2()
+    #experimento_3()
