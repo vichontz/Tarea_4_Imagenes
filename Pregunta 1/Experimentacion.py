@@ -136,13 +136,39 @@ def experimento_3():
     # Para realzar detalles, hay que aumentar la ganancia de las capas de detalle finas (j=1,2)
     # y disminuir la ganancia de las capas gruesas (j=4,5). Y Viceversa
 
-    g_fino = [2.5, 1.8, 1.2, 1.0, 1.0]   
-    g_grueso = [1.0, 1.0, 1.2, 1.8, 2.5]  
+    g_fino = [2.5, 1.8, 1.2, 1.0, 1.0]
+    g_grueso = [1.0, 1.0, 1.2, 1.8, 2.5]
 
+    recorte1 = (slice(430, 560), slice(295, 405))
+    recorte2 = (slice(525, 645), slice(65, 220))
     configs = [
         ("Enfasis Fino " + str(g_fino), g_fino),
         ("Enfasis Grueso " + str(g_grueso), g_grueso),
     ]
+
+    fig_g, axes_g = plt.subplots(2, 2, figsize=(10, 7.5), constrained_layout=True)
+    
+
+    for row, (nombre, gains) in enumerate(configs):
+        d_mod = [g * d for g, d in zip(gains, d_lap)]
+        w_mod = [g * w for g, w in zip(gains, w_star)]
+
+        rec_lap = np.clip(reconstruir_piramide(d_mod, c_lap), 0, 1)
+        rec_star = np.clip(reconstruir_starlet(w_mod, c_star), 0, 1)
+
+        axes_g[row, 0].imshow(rec_lap, cmap="gray", vmin=0, vmax=1)
+        axes_g[row, 0].set_title(f"LP - {nombre}", fontsize=8.5)
+        axes_g[row, 0].axis("off")
+
+        axes_g[row, 1].imshow(rec_star, cmap="gray", vmin=0, vmax=1)
+        axes_g[row, 1].set_title(f"Starlet - {nombre}", fontsize=8.5)
+        axes_g[row, 1].axis("off")
+
+        
+
+    fig_g.suptitle("Ganancia por escala - imágenes globales", fontsize=12)
+    fig_g.savefig(carpeta / "p1_exp3_ganancias_globales.png", dpi=200, bbox_inches="tight")
+    plt.show()
 
 if __name__ == "__main__":
 # Comentar y descomentar segun lo que se quiera ejecutar
