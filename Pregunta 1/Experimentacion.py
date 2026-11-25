@@ -1,17 +1,5 @@
 #Experimentación y análisis (10 puntos) 
 
-
-
-
- 
-#3. Modifique las capas mediante factores multiplicativos generales. Pruebe al menos dos configuraciones: 
-#una que enfatice principalmente estructuras finas y otra que enfatice estructuras de mayor escala. Use el 
-#mismo criterio cualitativo de ganancias en ambas representaciones y reconstruya las imágenes resultantes. 
-#Compare visualmente ambas alternativas y muestre al menos un recorte ampliado donde las diferencias sean 
-#claras. 
-
-
-
 import sys
 import numpy as np
 import matplotlib.pyplot as plt
@@ -134,6 +122,27 @@ def experimento_2():
     fig_r.savefig(carpeta / "p1_exp2_umbral_recortes.png", dpi=200, bbox_inches="tight")
     plt.show()
 
+
+
+
+ 
+#3. Modifique las capas mediante factores multiplicativos generales. Pruebe al menos dos configuraciones: 
+#una que enfatice principalmente estructuras finas y otra que enfatice estructuras de mayor escala. Use el 
+#mismo criterio cualitativo de ganancias en ambas representaciones y reconstruya las imágenes resultantes. 
+#Compare visualmente ambas alternativas y muestre al menos un recorte ampliado donde las diferencias sean 
+#claras. 
+def experimento_3():
+
+    # Para realzar detalles, hay que aumentar la ganancia de las capas de detalle finas (j=1,2)
+    # y disminuir la ganancia de las capas gruesas (j=4,5). Y Viceversa
+
+    g_fino = [2.5, 1.8, 1.2, 1.0, 1.0]   
+    g_grueso = [1.0, 1.0, 1.2, 1.8, 2.5]  
+
+    configs = [
+        ("Enfasis Fino " + str(g_fino), g_fino),
+        ("Enfasis Grueso " + str(g_grueso), g_grueso),
+    ]
 
 if __name__ == "__main__":
 # Comentar y descomentar segun lo que se quiera ejecutar
