@@ -1,20 +1,4 @@
 
-#Implementación (8 puntos) 
-
-#•  Implemente una primera estrategia de reconstrucción de color a partir de la luminancia procesada Y'. Para 
-#   cada canal C ∈ {R,G,B}, utilice una relación de cromaticidad con un parámetro β que controle la fuerza del 
-#   color: 
-#                                       C' = Y' · ( C / (Y + ε) )ᵝ 
-
-#•  Implemente una segunda estrategia que ajuste explícitamente el color después de la compresión de 
-#   luminancia. Puede trabajar sobre la saturación S en HSV/HSI o sobre el croma C* en CIELCh. La 
-#   transformación utilizada, sus parámetros y el tratamiento de valores fuera de rango deben quedar explícitos 
-#   en el código. 
-
-#•  Evite divisiones por cero y reporte cualquier normalización, clipping o conversión de rango utilizada 
-#   durante la reconstrucción. 
-
-
 import numpy as np
 import tifffile
 from scipy.fft import fft2, ifft2, fftshift, ifftshift
