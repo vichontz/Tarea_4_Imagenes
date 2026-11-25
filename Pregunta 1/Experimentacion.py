@@ -2,10 +2,7 @@
 
 
 
-#2. Aplique umbral duro a las capas de detalle. Para cada capa use Tⱼ = α·max|dⱼ| (umbral relativo) y pruebe al 
-#menos dos valores de α comunes a ambas representaciones. Reporte el porcentaje de coeficientes 
-#conservados por capa, reconstruya la imagen y analice pérdida de detalle, aparición de artefactos y 
-#diferencias entre ambos métodos.
+
  
 #3. Modifique las capas mediante factores multiplicativos generales. Pruebe al menos dos configuraciones: 
 #una que enfatice principalmente estructuras finas y otra que enfatice estructuras de mayor escala. Use el 
@@ -73,5 +70,26 @@ def experimento_1():
     plt.savefig(carpeta/"p1_exp1_capas.png", dpi=200, bbox_inches="tight")
     plt.show()
 
+#2. Aplique umbral duro a las capas de detalle. Para cada capa use Tⱼ = α·max|dⱼ| (umbral relativo) y pruebe al 
+#menos dos valores de α comunes a ambas representaciones. Reporte el porcentaje de coeficientes 
+#conservados por capa, reconstruya la imagen y analice pérdida de detalle, aparición de artefactos y 
+#diferencias entre ambos métodos.
+
+
+def umbral_duro(capas, alpha):
+    capas_thr = []
+    porcentajes = []
+    for c in capas:
+        T_j = alpha * np.max(np.abs(c))
+        c_mod = np.where(np.abs(c) >= T_j, c, 0.0)
+        pct = 100.0 * np.count_nonzero(c_mod) / c.size
+        capas_thr.append(c_mod)
+        porcentajes.append(pct)
+    return capas_thr, porcentajes
+
+
+def experimento_2():
+    return
 if __name__ == "__main__":
-    experimento_1()
+    #experimento_1()
+    experimento_2()
