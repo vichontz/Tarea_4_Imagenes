@@ -56,3 +56,22 @@ def experimento_1():
         ax_s.imshow(w_star[j], cmap="seismic", vmin=-vmax_s, vmax=vmax_s)
         ax_s.set_title(f"Starlet w_{j+1}\n{w_star[j].shape}", fontsize=9)
         ax_s.axis("off")
+
+        # Residuos
+    axes[0, NIVELES].imshow(c_lap, cmap="gray", vmin=0, vmax=1)
+    axes[0, NIVELES].set_title(f"LP Residuo c_{NIVELES}\n{c_lap.shape}", fontsize=9)
+    axes[0, NIVELES].axis("off")
+
+    axes[1, NIVELES].imshow(c_star, cmap="gray", vmin=0, vmax=1)
+    axes[1, NIVELES].set_title(f"Starlet Residuo c_{NIVELES}\n{c_star.shape}", fontsize=9)
+    axes[1, NIVELES].axis("off")
+
+    fig.suptitle(
+        f"Capas de detalle (LP ±{vmax_l:.3f}, Starlet ±{vmax_s:.3f}) y residual",
+        fontsize=12,
+    )
+    plt.savefig(carpeta/"p1_exp1_capas.png", dpi=200, bbox_inches="tight")
+    plt.show()
+
+if __name__ == "__main__":
+    experimento_1()
