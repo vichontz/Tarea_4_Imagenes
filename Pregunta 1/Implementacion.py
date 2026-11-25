@@ -3,6 +3,10 @@ from scipy.ndimage import convolve1d
 
 import tifffile
 import sys
+
+from pathlib import Path
+import matplotlib.pyplot as plt
+
 B3 = np.array([1, 4, 6, 4, 1]) / 16
  
 def suavizar(c, h):
@@ -70,36 +74,29 @@ def rmse(a, b):
     return np.sqrt(np.mean((a - b) ** 2))
 
 
+
+    
 if __name__ == "__main__":
-    import sys
-    import numpy as np
-    import matplotlib.pyplot as plt
+    
+    raiz = Path(__file__).resolve().parent.parent
+    ruta = Path(sys.argv[1]) if len(sys.argv) > 1 else raiz / "archivos_t4" / "memorial.tif"
+    carpeta = Path(__file__).resolve().parent / "Resultados"
+    carpeta.mkdir(exist_ok=True)
 
-    RUTA = sys.argv[1] if len(sys.argv) > 1 else "archivos_t4/memorial.tif"
-    NIVELES = 5
+    Y = cargar_luminancia(ruta)
+    I = compresion_global(Y, clave=0.18)
+
+    # Descomposicion y reconstruccion
+    d_lap, c_lap = piramide_laplaciana(I, 5)
+    w_star, c_star = starlet(I, 5)
+    print(f"RMSE piramide Laplaciana: {rmse(I, reconstruir_piramide(d_lap, c_lap)):.3e}")
+    print(f"RMSE starlet:             {rmse(I, reconstruir_starlet(w_star, c_star)):.3e}")
 
     
-    Y = cargar_luminancia(RUTA)
-    I = compresion_global(Y)
-    print(f"Imagen: {RUTA}  forma={I.shape}")
-    print(f"Luminancia HDR: min={Y.min():.4g} max={Y.max():.4g}  ->  comprimida: [{I.min():.2f}, {I.max():.2f}]")
-
-    
-    d_lap, c_lap = piramide_laplaciana(I, NIVELES)
-    w_star, c_star = starlet(I, NIVELES)
-
-    #Reconstruimos
-    I_lap = reconstruir_piramide(d_lap, c_lap)
-    I_star = reconstruir_starlet(w_star, c_star)
-    print(f"\nRMSE reconstruccion piramide Laplaciana: {rmse(I, I_lap):.3e}")
-    print(f"RMSE reconstruccion starlet:             {rmse(I, I_star):.3e}")
-
-    
-    print("\nPiramide Laplaciana:")
-    for j, d in enumerate(d_lap, 1):
-        print(f"  d_{j}: {d.shape}")
-    print(f"  residuo c_{NIVELES}: {c_lap.shape}")
-    n_lap = sum(d.size for d in d_lap) + c_lap.size
-    print(f"  coeficientes / pixeles = {n_lap / I.size:.3f}")
-    print(f"Starlet: {NIVELES} capas + residuo, todas {I.shape}  ->  coeficientes / pixeles = {NIVELES + 1}")
-    
+    fig, ax = plt.subplots(figsize=(5, 7.5))
+    ax.imshow(I, cmap="gray", vmin=0, vmax=1)
+    ax.set_title(f"{ruta.name}: luminancia, Reinhard global (clave=0.18)\n{I.shape[0]}x{I.shape[1]}")
+    ax.axis("off")
+    fig.savefig(carpeta/"luminancia_comprimida.png", dpi=250, bbox_inches="tight")
+    print("Figura guardada en", carpeta / "luminancia_comprimida.png")
+    plt.show()
