@@ -1,10 +1,6 @@
 
 #Implementación (8 puntos) 
 
-#•  Para cada imagen, obtenga una luminancia Y o L, y aplique sobre ella el filtro homomórfico y el método de 
-#   Durand usando parámetros base razonables, preferentemente los utilizados en las cápsulas. Mantenga esos 
-#   parámetros fijos y aplíquelos a las componentes RGB para usar como imagen de comparación. 
-
 #•  Implemente una primera estrategia de reconstrucción de color a partir de la luminancia procesada Y'. Para 
 #   cada canal C ∈ {R,G,B}, utilice una relación de cromaticidad con un parámetro β que controle la fuerza del 
 #   color: 
@@ -21,8 +17,8 @@
 
 import numpy as np
 import tifffile
-
-
+from scipy.fft import fft2, ifft2, fftshift, ifftshift
+import cv2
 
 
 # Funciones varias:
@@ -61,9 +57,35 @@ def H_homomorfico(forma, gamma_H, gamma_L, D0, c=1):
     return gamma_L + (gamma_H - gamma_L) * (1 - np.exp(-c * D2 / D0**2))
 
 
-def filtro_homomorfico(Y, gamma_H, gamma_L, D0, c=1):
-    return
+def filtro_homomorfico(Y, gamma_H=1.5, gamma_L=0.5, D0=30, c=1.0): #los valores son por la capsula
+    
+    N, M = Y.shape
+    z = np.log(Y + EPS)
+    z_pad = np.pad(z, ((0, N), (0, M)), mode="symmetric")
+
+    # Filtramos en Fourier
+    H = H_homomorfico(z_pad.shape, gamma_H, gamma_L, D0, c)
+    S = H * fftshift(fft2(z_pad))
+    s = ifft2(ifftshift(S)).real[:N, :M] # al volver recortamos el padding
+    return reescalar(np.exp(s), 0.5, 99) #normalizamos 
+
 
 
 # metodo de durand:
+def durand(Y, sigma_s=None, sigma_r=0.4, contraste=30): #los valores son por la capsula
+
+    logY = np.log10(Y + EPS).astype(np.float32)
+
+    if sigma_s is None:
+        sigma_s = 0.02 * max(Y.shape)
+
+    # base y detalle
+    base = cv2.bilateralFilter(logY, d=-1, sigmaColor=sigma_r, sigmaSpace=sigma_s)
+
+    detalle = logY - base
+
+    k = np.log10(contraste) / max(np.ptp(base), EPS)
+    Y_out = 10 ** (k * (base - base.max()) + detalle)
+
+    return Y_out
 
