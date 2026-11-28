@@ -75,7 +75,6 @@ def durand(Y, sigma_s=None, sigma_r=0.4, contraste=30): #los valores son por la 
 
 
 
-#Punto 2   C' = Y' · ( C / (Y + ε) )ᵝ 
 def recolorear(E, Y, Y_out, beta=1, recortar=True):
 
     rgb = Y_out[..., None] * ((E / (Y[..., None] + EPS))**beta)
